@@ -20,3 +20,12 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking {self.id} - {self.lounge.name} for {self.user.username}"
+    
+    
+class BookingLog(models.Model):
+    booking_id = models.ForeignKey(
+        Booking, on_delete=models.PROTECT)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Booking id: {self.booking_id.id} - {self.booking_id.status}"
