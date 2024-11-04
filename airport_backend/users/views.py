@@ -23,7 +23,7 @@ class TelegramAuthView(APIView):
         
         try:
             user = CustomUser.objects.get(
-                telegram_id=telegram_id, username=username)
+                telegram_id=telegram_id)
             
             user.location = location_json
             user.save()

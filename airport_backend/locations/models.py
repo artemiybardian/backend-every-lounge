@@ -2,6 +2,7 @@ from django.db import models
 
 
 
+
 class Airport(models.Model):
     name = models.CharField(max_length=255)
     # Код аэропорта
@@ -15,7 +16,7 @@ class Airport(models.Model):
 
 
 class Lounge(models.Model):
-    airport = models.ForeignKey(
+    airport_id = models.ForeignKey(
         Airport, related_name="lounges", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
