@@ -1,5 +1,5 @@
 import telebot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import requests
 import logging
 
@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 API_TOKEN = '7702184372:AAFpYNtn0V1MJRYB7BwgYVkd1pBhdWvSXCU'
 DJANGO_API_URL = 'http://127.0.0.1:8000/api/users/auth/'
+WEBAPP_URL = 'https://your-webapp.com'
 
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -61,6 +62,18 @@ def handle_location(message):
 
         if response.status_code == 200:
             bot.send_message(message.chat.id, "Ваши данные успешно обновлены.")
+
+            # Создаем кнопку для перехода в WebApp
+            keyboard = InlineKeyboardMarkup()
+            button = InlineKeyboardButton(
+                text="Перейти в WebApp", url=WEBAPP_URL)
+            keyboard.add(button)
+
+            bot.send_message(
+                message.chat.id,
+                "Вы можете перейти в ваш аккаунт в WebApp, нажав на кнопку ниже:",
+                reply_markup=keyboard
+            )
         else:
             bot.send_message(message.chat.id, "Ошибка при обновлении данных.")
 

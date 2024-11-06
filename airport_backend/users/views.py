@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -27,6 +28,8 @@ class TelegramAuthView(APIView):
             
             user.location = location_json
             user.save()
+            
+            login(request, user)
             
             return Response({"status": "success", "details": "Location updated successfully"}, status=status.HTTP_200_OK)
         

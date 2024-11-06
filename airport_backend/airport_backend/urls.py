@@ -1,7 +1,6 @@
 from django.urls import path, include
-from rest_framework.routers import SimpleRouter
-from locations import views
 from rest_framework import permissions
+from django.contrib import admin
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -32,4 +31,5 @@ urlpatterns = [
     path('api/bookings/', include('bookings.urls')),
     path('api/payments/', include('payments.urls')),
     path('api/notifications/', include('notifications.urls')),
+    path('admin-test/', admin.site.urls),
 ]

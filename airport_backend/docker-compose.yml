@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    networks:
+      - mynetwork
+
+  app:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn --bind 0.0.0.0:8000 airport_backend.wsgi:application"
+    env_file:
+      - .env
+    ports:
+    - 8000:8000
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+  telegram_bot:
+    build:
+      context: ./telegram_bot 
+    command: python tbot.py  
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - db
+    networks:
+      - mynetwork
+
+volumes:
+  postgres_data:
+  static_data:
+
+networks:
+  mynetwork:

@@ -81,16 +81,29 @@ WSGI_APPLICATION = 'airport_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'airport_database',
-        'USER': 'postgres',
-        'PASSWORD': 'ab3376803',
-        'HOST': 'localhost',
+        'USER': 'airport_admin',
+        'PASSWORD': 'hnTZdjxc27Nse5',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'airport_database',
+#         'USER': 'postgres',
+#         'PASSWORD': 'ab3376803',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
@@ -145,3 +158,11 @@ REST_FRAMEWORK = {
 }
 
 NEAREST_AIRPORTS_COUNT = 2
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
