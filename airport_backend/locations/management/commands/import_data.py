@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
                 for lounge_data in item['lounges']:
                     lounge, _ = Lounge.objects.get_or_create(
-                        airport=airport,
+                        airport_id=airport,
                         name=lounge_data['name'],
                         description=lounge_data.get('description', ''),
                         terminal=lounge_data.get('terminal', ''),

@@ -16,15 +16,18 @@ services:
     build: .
     command: >
       sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
              gunicorn --bind 0.0.0.0:8000 airport_backend.wsgi:application"
     env_file:
       - .env
     ports:
-    - 8000:8000
+      - 8000:8000
     depends_on:
       - db
     networks:
       - mynetwork
+    volumes:
+      - static_data:/app/static
 
   telegram_bot:
     build:

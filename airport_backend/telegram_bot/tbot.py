@@ -8,8 +8,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 API_TOKEN = '7702184372:AAFpYNtn0V1MJRYB7BwgYVkd1pBhdWvSXCU'
-DJANGO_API_URL = 'http://127.0.0.1:8000/api/users/auth/'
-WEBAPP_URL = 'https://your-webapp.com'
+DJANGO_API_URL = 'https://lounge-booking.com/api/users/auth/'
+WEBAPP_URL = 'https://lounge-booking.com/api/locations/nearest_airports/'
 
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -62,21 +62,28 @@ def handle_location(message):
 
         if response.status_code == 200:
             bot.send_message(message.chat.id, "Ваши данные успешно обновлены.")
+            
+            try:
+                user = CustomUser.objects.get(telegram_id=telegram_id)
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
 
-            # Создаем кнопку для перехода в WebApp
-            keyboard = InlineKeyboardMarkup()
-            button = InlineKeyboardButton(
-                text="Перейти в WebApp", url=WEBAPP_URL)
-            keyboard.add(button)
+                keyboard = InlineKeyboardMarkup()
+                button = InlineKeyboardButton(
+                    text="Перейти в WebApp", 
+                    url=f"{WEBAPP_URL}?token={access_token}"
+                )
+                keyboard.add(button)
 
-            bot.send_message(
-                message.chat.id,
-                "Вы можете перейти в ваш аккаунт в WebApp, нажав на кнопку ниже:",
-                reply_markup=keyboard
-            )
+                bot.send_message(
+                    message.chat.id,
+                    "Вы можете перейти в ваш аккаунт в WebApp, нажав на кнопку ниже:",
+                    reply_markup=keyboard
+                )
+            except CustomUser.DoesNotExist:
+                bot.send_message(message.chat.id, "Пользователь не найден.")
         else:
             bot.send_message(message.chat.id, "Ошибка при обновлении данных.")
-
 
 # Запуск бота
 if __name__ == '__main__':
