@@ -17,8 +17,8 @@ class Command(BaseCommand):
                     code=airport_data['code'],
                     city=airport_data['city'],
                     country=airport_data['country'],
-                    location=f"POINT({airport_data['coordinates']['lng']} {
-                        airport_data['coordinates']['lat']})"
+                    location={'latitude': airport_data['coordinates']['lat'],
+                              'longitude': airport_data['coordinates']['lng']}
                 )
 
                 for lounge_data in item['lounges']:

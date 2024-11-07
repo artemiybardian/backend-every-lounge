@@ -59,18 +59,19 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
         # Вычисляем расстояние до каждого аэропорта и добавляем в список
         for airport in Airport.objects.all():
             airport_location = airport.location
+            airport_lat = airport_location['latitude']
+            airport_lon = airport_location['longitude']
 
             # Преобразуем строку WKT "POINT(longitude latitude)" в координаты
-            match = re.match(r'POINT\(([-\d.]+)\s([-\d.]+)\)', airport_location)
-            if not match:
-                # Пропускаем аэропорт с некорректным форматом
-                continue
+            # match = re.match(r'POINT\(([-\d.]+)\s([-\d.]+)\)', airport_location)
+            # if not match:
+            #     # Пропускаем аэропорт с некорректным форматом
+            #     continue
 
-            airport_lon = float(match.group(1))
-            airport_lat = float(match.group(2))
+            # airport_lon = float(match.group(1))
+            # airport_lat = float(match.group(2))
 
             if not airport_lat or not airport_lon:
-                # Пропускаем аэропорт с отсутствующими координатами
                 continue
 
             # Рассчитываем расстояние и добавляем аэропорты в список
