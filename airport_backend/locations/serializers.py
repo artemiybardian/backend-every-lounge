@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from .models import Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage
+from .models import Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage, Airport
 
+
+class AirportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airport
+        fields = ['id', 'name', 'code', 'city', 'country']
 
 class LoungeScheduleSerializer(serializers.ModelSerializer):
     class Meta:
