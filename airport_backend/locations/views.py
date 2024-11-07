@@ -63,15 +63,6 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
             airport_lat = airport_location['latitude']
             airport_lon = airport_location['longitude']
 
-            # Преобразуем строку WKT "POINT(longitude latitude)" в координаты
-            # match = re.match(r'POINT\(([-\d.]+)\s([-\d.]+)\)', airport_location)
-            # if not match:
-            #     # Пропускаем аэропорт с некорректным форматом
-            #     continue
-
-            # airport_lon = float(match.group(1))
-            # airport_lat = float(match.group(2))
-
             if not airport_lat or not airport_lon:
                 continue
 
@@ -82,9 +73,10 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
             airports_with_distance.append({
                 'id': airport.id,
                 'name': airport.name,  # Предполагается, что у модели Airport есть поле `name`
-                'latitude': airport_lat,
-                'longitude': airport_lon,
-                'distance': distance
+                'code': airport.code,
+                'city': airport.city,
+                'country': airport.country,
+                'distance': round(distance)
             })
 
         # Сортируем аэропорты по расстоянию
