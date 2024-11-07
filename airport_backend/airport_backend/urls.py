@@ -21,15 +21,14 @@ schema_view = get_schema_view(
 from django.urls import path, include
 
 urlpatterns = [
-    path('swagger/', schema_view.with_ui('swagger',
-         cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc',
-         cache_timeout=0), name='schema-redoc'),
+    # path('swagger/', schema_view.with_ui('swagger',
+    #      cache_timeout=0), name='schema-swagger-ui'),
+    # path('redoc/', schema_view.with_ui('redoc',
+    #      cache_timeout=0), name='schema-redoc'),
     path('admin/', include('admin_panel.urls')),
     path('api/users/', include('users.urls')),
     path('api/locations/', include('locations.urls')),
     path('api/bookings/', include('bookings.urls')),
     path('api/payments/', include('payments.urls')),
     path('api/notifications/', include('notifications.urls')),
-    path('admin-test/', admin.site.urls),
 ]

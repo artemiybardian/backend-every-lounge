@@ -1,10 +1,7 @@
-from django.urls import path, include
-from rest_framework.routers import SimpleRouter
-from .views import BookingViewSet
+from django.urls import path
+from bookings.views import BookingCreateAPIView
 
-router = SimpleRouter()
-router.register(r'book', BookingViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('create/', BookingCreateAPIView.as_view())
 ]

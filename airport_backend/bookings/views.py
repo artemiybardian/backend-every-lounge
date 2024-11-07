@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from locations.models import Lounge
@@ -8,7 +8,7 @@ from .serializers import BookingSerializer
 
 
 # Эндпоинт для создания бронирования
-class BookingViewSet(viewsets.ModelViewSet):
+class BookingCreateAPIView(generics.CreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
@@ -21,19 +21,20 @@ class BookingViewSet(viewsets.ModelViewSet):
         except Lounge.DoesNotExist:
             return Response({'status': 'error', 'details': 'Lounge not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Пример наценки
-        markup_percentage = MARKUP_PERCENTAGE
-        total_price = lounge.base_price * (1 + markup_percentage)
+        # Расчет общей цены с наценкой
+        total_price = lounge.base_price * (1 + MARKUP_PERCENTAGE)
 
+        # Создание бронирования
         booking = Booking.objects.create(
             user=user,
             lounge=lounge,
             total_price=total_price,
             status='in_progress'
         )
-        
-        # Логируем создание бронирования
-        BookingLog.objects.create(booking_id=booking)
 
+        # Логирование бронирования
+        BookingLog.objects.create(booking=booking)
+
+        # Сериализация данных и отправка ответа
         serializer = self.get_serializer(booking)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
