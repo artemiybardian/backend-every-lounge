@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Airport, Lounge
-from .serializers import AirportSerializer, LoungeSerializer, LoungeDetailSerializer
+from .serializers import AirportSerializer, LoungeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
