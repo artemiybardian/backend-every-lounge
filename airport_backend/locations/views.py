@@ -1,13 +1,12 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Airport, Lounge
-from .serializers import AirportSerializer, LoungeSerializer, LoungeDetailSerializer, NearestAirportSerializer
+from .serializers import AirportSerializer, LoungeSerializer, LoungeDetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
 from .utils import haversine
-import json
-import re
+from rest_framework.decorators import action
 
 # Эндпоинт для списка аэропортов
 class AirportReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -21,20 +20,22 @@ class LoungeReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Lounge.objects.all()
     serializer_class = LoungeSerializer
 
-    def list(self, request, *args, **kwargs):
-        airport_id = request.query_params.get('airport_id')
-        if not airport_id:
-            return Response({"error": "airport_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        lounges = Lounge.objects.filter(airport_id=airport_id)
+    # Метод для получения списка залов по коду аэропорта
+    @action(detail=False, methods=['get'], url_path='by_airport')
+    def list_by_airport(self, request):
+        airport_code = request.query_params.get('airport_code')
+        if not airport_code:
+            return Response({"error": "airport_code is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        lounges = Lounge.objects.filter(airport_id__code=airport_code)
         serializer = self.get_serializer(lounges, many=True)
         return Response(serializer.data)
 
-
-
-# Эндпоинт для детальной информации о зале
-class LoungeDetailReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Lounge.objects.all()
-    serializer_class = LoungeDetailSerializer
+    # Метод для получения детальной информации о конкретном зале по его ID
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):

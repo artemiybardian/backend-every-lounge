@@ -1,36 +1,38 @@
 from rest_framework import serializers
-from .models import Airport, Lounge
+from .models import Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage
 
 
-class AirportSerializer(serializers.ModelSerializer):
+class LoungeScheduleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Airport
-        fields = ['id', 'name', 'code', 'city', 'country']
+        model = LoungeSchedule
+        fields = ['valid_from_time', 'valid_till_time', 'valid_days']
+
+
+class EntryConditionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EntryCondition
+        fields = ['type', 'cost', 'max_stay_duration']
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = ['name']
+
+
+class GalleryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GalleryImage
+        fields = ['image_url']
 
 
 class LoungeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lounge
-        fields = ['id', 'name', 'description', 'terminal',
-                  'base_price', 'features', 'gallery']
-
-
-class LoungeDetailSerializer(serializers.ModelSerializer):
-    schedule = serializers.StringRelatedField(many=True)
-    entry_conditions = serializers.StringRelatedField(many=True)
-    features = serializers.StringRelatedField(many=True)
-    gallery = serializers.StringRelatedField(many=True)
+    schedule = LoungeScheduleSerializer(many=True, read_only=True)
+    entry_conditions = EntryConditionSerializer(many=True, read_only=True)
+    features = FeatureSerializer(many=True, read_only=True)
+    gallery = GalleryImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Lounge
         fields = ['id', 'name', 'description', 'terminal', 'base_price',
                   'schedule', 'entry_conditions', 'features', 'gallery']
-
-
-class NearestAirportSerializer(serializers.ModelSerializer):
-    distance = serializers.FloatField(read_only=True)
-
-    class Meta:
-        model = Airport
-        fields = ['id', 'name', 'code', 'city',
-                  'country', 'location', 'distance']
