@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.conf import settings
 from .utils import haversine
 import json
-import re
+
 
 # Эндпоинт для списка аэропортов
 class AirportReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -37,6 +37,7 @@ class LoungeDetailReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LoungeDetailSerializer
 
 
+# Эндпоинт для ближайших аэропортов
 class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -60,30 +61,20 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
         for airport in Airport.objects.all():
             airport_location = airport.location
 
-            # Преобразуем строку WKT "POINT(longitude latitude)" в координаты
+            # Преобразуем строку WKT "POINT(longitude latitude)" в список [longitude, latitude]
             match = re.match(r'POINT\(([-\d.]+)\s([-\d.]+)\)', airport_location)
             if not match:
-                # Пропускаем аэропорт с некорректным форматом
-                continue
+                return Response({"status": "error", "detals": f"Invalid location format for airport {airport.id}"}, status=status.HTTP_400_BAD_REQUEST)
 
             airport_lon = float(match.group(1))
             airport_lat = float(match.group(2))
 
             if not airport_lat or not airport_lon:
-                # Пропускаем аэропорт с отсутствующими координатами
-                continue
+                return Response({"status": "error", "detals": f"Missing coordinates for airport {airport.id}"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Рассчитываем расстояние и добавляем аэропорты в список
+            # Далее выполняем расчёт расстояния и добавляем аэропорты в список
             distance = haversine(user_lat, user_lon, airport_lat, airport_lon)
-
-            # Извлекаем нужные поля из объекта Airport, чтобы они были сериализуемыми
-            airports_with_distance.append({
-                'id': airport.id,
-                'name': airport.name,  # Предполагается, что у модели Airport есть поле `name`
-                'latitude': airport_lat,
-                'longitude': airport_lon,
-                'distance': distance
-            })
+            airports_with_distance.append({'airport': airport, 'distance': distance})
 
         # Сортируем аэропорты по расстоянию
         airports_with_distance.sort(key=lambda x: x['distance'])
@@ -91,5 +82,4 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
         # Ограничиваем список ближайшими аэропортами
         nearest_airports = airports_with_distance[:nearest_count]
 
-        # Возвращаем ответ
         return Response(nearest_airports, status=status.HTTP_200_OK)

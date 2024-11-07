@@ -63,11 +63,12 @@ def handle_location(message):
         if response.status_code == 200:
             bot.send_message(message.chat.id, "Ваши данные успешно обновлены.")
             
-            try:
-                user = CustomUser.objects.get(telegram_id=telegram_id)
-                refresh = RefreshToken.for_user(user)
-                access_token = str(refresh.access_token)
-
+            # Получаем токен доступа из Django API
+            response_data = response.json()
+            if 'token' in response_data:
+                access_token = response_data['token']
+                
+                # Создаем кнопку для перехода в WebApp с передачей токена
                 keyboard = InlineKeyboardMarkup()
                 button = InlineKeyboardButton(
                     text="Перейти в WebApp", 
@@ -80,11 +81,10 @@ def handle_location(message):
                     "Вы можете перейти в ваш аккаунт в WebApp, нажав на кнопку ниже:",
                     reply_markup=keyboard
                 )
-            except CustomUser.DoesNotExist:
-                bot.send_message(message.chat.id, "Пользователь не найден.")
+            else:
+                bot.send_message(message.chat.id, "Не удалось получить токен. Попробуйте еще раз.")
         else:
             bot.send_message(message.chat.id, "Ошибка при обновлении данных.")
-
 # Запуск бота
 if __name__ == '__main__':
     logger.info("Запуск бота...")

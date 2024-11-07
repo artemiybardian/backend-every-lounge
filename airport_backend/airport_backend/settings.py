@@ -85,27 +85,15 @@ WSGI_APPLICATION = 'airport_backend.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'airport_database',
-        'USER': 'airport_admin',
-        'PASSWORD': 'hnTZdjxc27Nse5',
-        'HOST': 'db',
-        'PORT': '5432',
-    }
-}
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'airport_database',
-#         'USER': 'postgres',
-#         'PASSWORD': 'ab3376803',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
+     'default': {
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': 'airport_database',
+         'USER': 'airport_admin',
+         'PASSWORD': 'hnTZdjxc27Nse5',
+         'HOST': 'db',
+         'PORT': '5432',
+     }
+ }
 
 
 # Password validation
