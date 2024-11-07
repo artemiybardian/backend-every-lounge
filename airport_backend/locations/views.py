@@ -72,7 +72,7 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
             # Извлекаем нужные поля из объекта Airport, чтобы они были сериализуемыми
             airports_with_distance.append({
                 'id': airport.id,
-                'name': airport.name,  # Предполагается, что у модели Airport есть поле `name`
+                'name': airport.name,
                 'code': airport.code,
                 'city': airport.city,
                 'country': airport.country,
