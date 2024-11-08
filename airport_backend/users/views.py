@@ -38,7 +38,7 @@ class TelegramAuthView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            log.info("Get access token")
+            log.info(f"Get access token for {user.username} - {access_token}")
 
             return Response({
                 "status": "success",
