@@ -35,7 +35,7 @@ class BookingCreateAPIView(generics.CreateAPIView):
         )
 
         # Логирование бронирования
-        BookingLog.objects.create(booking=booking)
+        BookingLog.objects.create(booking_id=booking)
         
         # Отправка уведомления в Telegram (если нужно)
         send_telegram_notification(user.telegram_id, f"Ваше бронирование {booking.id} создано.")
