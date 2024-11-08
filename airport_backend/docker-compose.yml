@@ -44,6 +44,11 @@ services:
 volumes:
   postgres_data:
   static_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./static 
 
 networks:
   mynetwork:
