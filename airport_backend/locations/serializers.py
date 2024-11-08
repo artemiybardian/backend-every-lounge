@@ -40,5 +40,4 @@ class LoungeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lounge
-        fields = ['id', 'name', 'description', 'terminal', 'base_price',
-                  'schedule', 'entry_conditions', 'features', 'gallery']
+        fields = ['id', 'name', 'airport','description', 'terminal', 'base_price','schedule', 'entry_conditions', 'features', 'gallery']
