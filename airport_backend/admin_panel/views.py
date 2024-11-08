@@ -4,6 +4,7 @@ from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .utils import send_telegram_notification
 from .models import AdminActionLog
 from .serializers import AdminActionLogSerializer, BookingAnalyticsSerializer
 from locations.models import Airport, Lounge 
@@ -42,21 +43,51 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAdminUser]
     
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdminUser], url_path='update_status')
-    def update_status(self, request, pk=None):
-        booking = self.get_object()
-        new_status = request.data.get('status')
-        if new_status in dict(Booking.STATUS_CHOICES):
-            booking.status = new_status
-            booking.save()
-            send_telegram_notification(booking.user, f"Your booking #{booking.id}    status has been updated to {new_status}.")
-            AdminActionLog.objects.create(
-                admin_user=request.user,
-                action=f"Updated booking {booking.id} status to {new_status}"
-            )
-            return Response({'status': 'updated'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminUser], url_path='confirm')
+    def confirm(self, request, pk=None):
+        # Получаем объект бронирования по pk
+        try:
+            booking = Booking.objects.get(pk=pk)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        booking.status = 'confirmed'
+        booking.save()
+
+        send_telegram_notification(
+            booking.user,
+            f"Ваше бронирование {booking.lounge.name} для аэропорта {booking.lounge.airport_id.name} одобрено!")
+
+        AdminActionLog.objects.create(
+            admin_user=request.user,
+            action=f"Бронирование #{booking.id} одобрено!"
+        )
+        
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminUser], url_path='cancel')
+    def cancel(self, request, pk=None):
+        # Получаем объект бронирования по pk
+        try:
+            booking = Booking.objects.get(pk=pk)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        booking.status = 'cancelled'
+        booking.save()
+
+        send_telegram_notification(
+            booking.user,
+            f"Ваше бронирование {booking.lounge.name} для аэропорта {booking.lounge.airport_id.name} отклонено!")
+
+        AdminActionLog.objects.create(
+            admin_user=request.user,
+            action=f"Бронирование #{booking.id} отменено!"
+        )
+
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+    
     
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsAdminUser], url_path='in_progress')
     def in_progress_bookings(self, request):
