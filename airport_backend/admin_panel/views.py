@@ -1,5 +1,4 @@
-from django.contrib.auth.models import Group
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -11,8 +10,7 @@ from locations.models import Airport, Lounge
 from bookings.serializers import Booking
 from locations.serializers import AirportSerializer, LoungeSerializer
 from bookings.serializers import BookingSerializer
-from users.serializers import CustomUserSerializer
-from users.models import CustomUser
+
 from datetime import datetime
 
 
@@ -108,7 +106,6 @@ class AdminLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 class BookingAnalyticsAPIView(generics.ListAPIView):
     serializer_class = BookingAnalyticsSerializer
-    # Не используем queryset напрямую, так как делаем агрегацию
     queryset = Booking.objects.all()
     permission_classes = [IsAdminUser]
 
@@ -134,12 +131,9 @@ class BookingAnalyticsAPIView(generics.ListAPIView):
         # Выполняем агрегацию
         analytics = bookings.aggregate(
             total_bookings=Count('id'),
-            confirmed_bookings=Count(
-                'id', filter=Booking.objects.filter(status='confirmed')),
-            cancelled_bookings=Count(
-                'id', filter=Booking.objects.filter(status='cancelled')),
-            in_progress_bookings=Count(
-                'id', filter=Booking.objects.filter(status='in_progress'))
+            confirmed_bookings=Count('id', filter=Q(status='confirmed')),
+            cancelled_bookings=Count('id', filter=Q(status='cancelled')),
+            in_progress_bookings=Count('id', filter=Q(status='in_progress'))
         )
 
         # Добавляем даты в результат
