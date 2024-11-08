@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 
 API_TOKEN = '7702184372:AAFpYNtn0V1MJRYB7BwgYVkd1pBhdWvSXCU'
 DJANGO_API_URL = 'https://lounge-booking.com/api/users/auth/'
-WEBAPP_URL = 'https://lounge-booking.com/api/locations/nearest_airports/'
+# WEBAPP_URL = 'https://lounge-booking.com/api/locations/nearest_airports/'
+WEBAPP_URL = 'https://lounge-booking.com/admin/bookings/'
+
 
 bot = telebot.TeleBot(API_TOKEN)
 
