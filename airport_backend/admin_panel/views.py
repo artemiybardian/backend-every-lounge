@@ -13,7 +13,7 @@ from locations.serializers import AirportSerializer, LoungeSerializer
 from bookings.serializers import BookingSerializer
 from users.serializers import CustomUserSerializer
 from users.models import CustomUser
-import datetime
+from datetime import datetime
 
 
 class AirportViewSet(viewsets.ModelViewSet):
@@ -104,22 +104,6 @@ class AdminLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AdminActionLog.objects.all()
     serializer_class = AdminActionLogSerializer
     permission_classes = [IsAdminUser]  
-
-
-class AdminUserCreateView(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.filter(is_staff=True)
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAdminUser]
-
-    def perform_create(self, serializer):
-        user = serializer.save(is_staff=True, is_superuser=True)
-        # Можно добавить пользователя в группу администраторов
-        admin_group, created = Group.objects.get_or_create(name='Admin')
-        user.groups.add(admin_group)
-        AdminActionLog.objects.create(
-            admin_user=self.request.user,
-            action=f"Added new admin user {user.username}"
-        )
 
 
 class BookingAnalyticsAPIView(generics.ListAPIView):
