@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from users.models import CustomUser
 from logging import Logger
@@ -10,6 +11,8 @@ log = Logger(__name__)
 
 
 class TelegramAuthView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         telegram_id = request.data.get("telegram_id")
         username = request.data.get("username")  # username в Telegram
