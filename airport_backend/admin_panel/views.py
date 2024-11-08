@@ -25,6 +25,16 @@ class LoungeViewSet(viewsets.ModelViewSet):
     queryset = Lounge.objects.all()
     serializer_class = LoungeSerializer
     permission_classes = [IsAdminUser]
+    
+    @action(detail=False, methods=['get'], url_path='by_airport')
+    def list_by_airport(self, request):
+        airport_code = request.query_params.get('airport_code')
+        if not airport_code:
+            return Response({"error": "airport_code is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        lounges = Lounge.objects.filter(airport_id__code=airport_code)
+        serializer = self.get_serializer(lounges, many=True)
+        return Response(serializer.data)
 
 
 class BookingViewSet(viewsets.ModelViewSet):
@@ -32,7 +42,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAdminUser]
     
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdminUser])
+    @action(detail=True, methods=['patch'], permission_classes=[IsAdminUser], url_path='update_status')
     def update_status(self, request, pk=None):
         booking = self.get_object()
         new_status = request.data.get('status')
@@ -48,7 +58,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         else:
             return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsAdminUser])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsAdminUser], url_path='in_progress')
     def in_progress_bookings(self, request):
         """
         Get all bookings with 'in_progress' status.
