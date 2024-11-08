@@ -12,6 +12,14 @@ def log_admin_action(admin_user, action_description):
 
 
 def send_telegram_notification(user_telegram_id, message):
+    try:
+        # Убедитесь, что это целое число
+        user_telegram_id = int(user_telegram_id)
+    except ValueError:
+        logging.error(
+            "Некорректный формат user_telegram_id: не является числом")
+        return
+
     token = '7702184372:AAFpYNtn0V1MJRYB7BwgYVkd1pBhdWvSXCU'
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     data = {
@@ -19,9 +27,4 @@ def send_telegram_notification(user_telegram_id, message):
         "text": message
     }
     response = requests.post(url, data=data)
-
-    # Логируем ответ для отладки
-    logger.info(f"Telegram response: {response.json()}")
-
-    if response.status_code != 200:
-        logger.error(f"Ошибка отправки сообщения: {response.json()}")
+    logging.info(f"Telegram response: {response.json()}")
