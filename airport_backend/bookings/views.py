@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
+from decimal import Decimal
 from locations.models import Lounge
 from airport_backend.settings import MARKUP_PERCENTAGE
 from admin_panel.utils import send_telegram_notification
@@ -23,7 +24,7 @@ class BookingCreateAPIView(generics.CreateAPIView):
             return Response({'status': 'error', 'details': 'Lounge not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Расчет общей цены с наценкой
-        total_price = lounge.base_price * (1 + MARKUP_PERCENTAGE)
+        total_price = lounge.base_price * Decimal(1 + MARKUP_PERCENTAGE)
 
         # Создание бронирования
         booking = Booking.objects.create(
