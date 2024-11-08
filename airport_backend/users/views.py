@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from users.models import CustomUser
-from logging import Logger
+from logging import getLogger
 from rest_framework_simplejwt.tokens import RefreshToken
 
-log = Logger(__name__)
+log = getLogger(__name__)
 
 
 class TelegramAuthView(APIView):
@@ -56,7 +56,7 @@ class TelegramAuthView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            log.info("Get access token")
+            log.info(f"Get access token for {user.username} - {access_token}")
 
             return Response({
                 "status": "success",
