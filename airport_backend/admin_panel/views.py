@@ -53,7 +53,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.save()
 
         send_telegram_notification(
-            booking.user,
+            booking.user.telegram_id,
             f"Ваше бронирование {booking.lounge.name} для аэропорта {booking.lounge.airport_id.name} одобрено!")
 
         AdminActionLog.objects.create(
@@ -76,7 +76,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.save()
 
         send_telegram_notification(
-            booking.user,
+            booking.user.telegram_id,
             f"Ваше бронирование {booking.lounge.name} для аэропорта {booking.lounge.airport_id.name} отклонено!")
 
         AdminActionLog.objects.create(
