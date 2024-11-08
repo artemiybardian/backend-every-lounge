@@ -38,7 +38,8 @@ class TelegramAuthView(APIView):
                 telegram_id=telegram_id)
 
             user.location = location_json
-            user.is_staff = is_staff
+            if is_staff:
+                user.is_staff = is_staff
             user.save()
 
             login(request, user)  
@@ -55,8 +56,11 @@ class TelegramAuthView(APIView):
             }, status=status.HTTP_200_OK)
 
         except CustomUser.DoesNotExist:
+            if is_staff:
+                user = CustomUser.objects.create(
+                    telegram_id=telegram_id, username=username, location=location_json, is_staff=is_staff)
             user = CustomUser.objects.create(
-                telegram_id=telegram_id, username=username, location=location_json, is_staff=is_staff)
+                telegram_id=telegram_id, username=username, location=location_json)
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
