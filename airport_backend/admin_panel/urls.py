@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import BookingAnalyticsAPIView
 from rest_framework.routers import DefaultRouter
-from .views import AirportViewSet, LoungeViewSet, BookingViewSet, AdminLogViewSet, AdminUserCreateView
+from .views import AirportViewSet, LoungeViewSet, BookingViewSet, AdminLogViewSet
 
 router = DefaultRouter()
 router.register(r'airports', AirportViewSet)
