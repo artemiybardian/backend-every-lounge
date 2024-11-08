@@ -8,7 +8,6 @@ router.register(r'airports', AirportViewSet)
 router.register(r'lounges', LoungeViewSet)
 router.register(r'bookings', BookingViewSet)
 router.register(r'admin-logs', AdminLogViewSet)
-router.register(r'admin-users', AdminUserCreateView)
 
 urlpatterns = [
     path('', include(router.urls)),
