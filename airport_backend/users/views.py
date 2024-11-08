@@ -20,6 +20,7 @@ class TelegramAuthView(APIView):
         telegram_id = request.data.get("telegram_id")
         username = request.data.get("username")  # username в Telegram
         location = request.data.get("location")
+        is_staff = request.data.get("is_staff")
 
         if not telegram_id or not location:
             return Response({"error": "telegram_id and location is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -37,6 +38,7 @@ class TelegramAuthView(APIView):
                 telegram_id=telegram_id)
 
             user.location = location_json
+            user.is_staff = is_staff
             user.save()
 
             login(request, user)  
@@ -54,7 +56,7 @@ class TelegramAuthView(APIView):
 
         except CustomUser.DoesNotExist:
             user = CustomUser.objects.create(
-                 telegram_id=telegram_id, username=username, location=location_json)
+                telegram_id=telegram_id, username=username, location=location_json, is_staff=is_staff)
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
