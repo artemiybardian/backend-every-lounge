@@ -6,7 +6,10 @@ from rest_framework import status
 from users.models import CustomUser
 from logging import getLogger
 from rest_framework_simplejwt.tokens import RefreshToken
+import logging
 
+
+logging.basicConfig(level=logging.INFO)
 log = getLogger(__name__)
 
 
