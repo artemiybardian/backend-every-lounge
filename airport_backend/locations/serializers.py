@@ -32,6 +32,7 @@ class GalleryImageSerializer(serializers.ModelSerializer):
 
 
 class LoungeSerializer(serializers.ModelSerializer):
+    airport = AirportSerializer(source='airport_id', read_only=True)
     schedule = LoungeScheduleSerializer(many=True, read_only=True)
     entry_conditions = EntryConditionSerializer(many=True, read_only=True)
     features = FeatureSerializer(many=True, read_only=True)

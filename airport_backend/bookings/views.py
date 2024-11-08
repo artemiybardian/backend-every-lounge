@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from locations.models import Lounge
 from airport_backend.settings import MARKUP_PERCENTAGE
+from admin_panel.utils import send_telegram_notification
 from .models import Booking, BookingLog
 from .serializers import BookingSerializer
 
@@ -34,6 +35,9 @@ class BookingCreateAPIView(generics.CreateAPIView):
 
         # Логирование бронирования
         BookingLog.objects.create(booking=booking)
+        
+        # Отправка уведомления в Telegram (если нужно)
+        send_telegram_notification(user.telegram_id, f"Ваше бронирование {booking.id} создано.")
 
         # Сериализация данных и отправка ответа
         serializer = self.get_serializer(booking)
