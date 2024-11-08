@@ -69,7 +69,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class AdminActionLogViewSet(viewsets.ReadOnlyModelViewSet):
+class AdminLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AdminActionLog.objects.all()
     serializer_class = AdminActionLogSerializer
     permission_classes = [IsAdminUser]  
