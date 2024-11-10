@@ -28,7 +28,7 @@ services:
     networks:
       - mynetwork
     volumes:
-      - static_data:/app/static
+      - ./staticfiles:/staticfiles
 
   telegram_bot:
     build:
