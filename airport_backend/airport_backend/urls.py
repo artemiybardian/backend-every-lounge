@@ -6,7 +6,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Cosmomoll Developers Api",
+        title="Developers Api",
         default_version='v0.1',
         description="Описание для разработчиков фронтенда",
         terms_of_service="https://www.google.com/policies/terms/",
