@@ -17,13 +17,15 @@ from datetime import datetime
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
-    permission_classes = [IsAdminUser]  # Только админы могут управлять данными
+    # only develop version
+    # permission_classes = [IsAdminUser]
 
 
 class LoungeViewSet(viewsets.ModelViewSet):
     queryset = Lounge.objects.all()
     serializer_class = LoungeSerializer
-    permission_classes = [IsAdminUser]
+    # only develop version
+    # permission_classes = [IsAdminUser]
     
     @action(detail=False, methods=['get'], url_path='by_airport')
     def list_by_airport(self, request):
@@ -39,7 +41,8 @@ class LoungeViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsAdminUser]
+    # only develop version
+    # permission_classes = [IsAdminUser]
     
     @action(detail=True, methods=['get'], permission_classes=[IsAdminUser], url_path='confirm')
     def confirm(self, request, pk=None):
@@ -101,13 +104,15 @@ class BookingViewSet(viewsets.ModelViewSet):
 class AdminLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AdminActionLog.objects.all()
     serializer_class = AdminActionLogSerializer
-    permission_classes = [IsAdminUser]  
+    # only develop version
+    # permission_classes = [IsAdminUser]
 
 
 class BookingAnalyticsAPIView(generics.ListAPIView):
     serializer_class = BookingAnalyticsSerializer
     queryset = Booking.objects.all()
-    permission_classes = [IsAdminUser]
+    # only develop version
+    # permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
         # Получаем параметры start_date и end_date

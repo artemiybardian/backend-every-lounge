@@ -39,7 +39,8 @@ class LoungeReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # only develop version
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request):
         user = request.user
