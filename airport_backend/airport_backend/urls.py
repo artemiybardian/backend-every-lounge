@@ -1,27 +1,19 @@
 from django.urls import path, include
-from rest_framework import permissions
-from django.contrib import admin
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
-# Настройка схемы Swagger
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Every Lounge Backend",
-        default_version='v1',
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@myapi.local"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
-
-from django.urls import path, include
+from rest_framework.schemas import get_schema_view
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('admin/', include('admin_panel.urls')),
+    path('api/api_schema/', get_schema_view(
+        title='API Schema',
+        description='Guide for the REST API'
+    ), name='api_schema'),
+    path("api/swagger/", TemplateView.as_view(
+                template_name="swagger-ui.html",
+                extra_context={"schema_url": "/api/api_schema/"},
+        ),
+         name="swagger-ui",
+    ),
+    path('api/admin/', include('admin_panel.urls')),
     path('api/users/', include('users.urls')),
     path('api/locations/', include('locations.urls')),
     path('api/bookings/', include('bookings.urls')),
