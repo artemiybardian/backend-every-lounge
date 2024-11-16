@@ -39,15 +39,15 @@ class LoungeAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
     list_filter = ('airport_id',)
 
 
-@admin.register(LoungeSchedule, AdminActionLoggingMixin)
-class LoungeScheduleAdmin(admin.ModelAdmin):
+@admin.register(LoungeSchedule)
+class LoungeScheduleAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
     list_display = ('lounge', 'valid_from_time',
                     'valid_till_time', 'valid_days')
     list_filter = ('lounge',)
 
 
-@admin.register(EntryCondition, AdminActionLoggingMixin)
-class EntryConditionAdmin(admin.ModelAdmin):
+@admin.register(EntryCondition)
+class EntryConditionAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
     list_display = ('lounge', 'type', 'cost', 'max_stay_duration')
     list_filter = ('lounge', 'type')
 
@@ -72,11 +72,35 @@ class AdminActionLogAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
 
 
 @admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin):
+class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
+    change_list_template = 'admin/booking_analytics.html'
     list_display = ('id', 'user', 'lounge', 'status', 'first_name', 'last_name', 'guest_count', 'total_price', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('user__username', 'lounge__name', 'last_name')
     actions = ['confirm_booking']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('analytics/', self.admin_site.admin_view(self.analytics_view),
+                 name='booking-analytics'),
+        ]
+        return custom_urls + urls
+
+    def analytics_view(self, request):
+        form = BookingAnalyticsForm(request.POST or None)
+        analytics_data = None
+
+        if form.is_valid():
+            analytics_data = form.get_analytics()
+            AdminActionLog.objects.create(
+                admin_user=request.user,
+                action=f"Администратор {request.user.username} запросил аналитику.")
+
+        return TemplateResponse(request, 'admin/booking_analytics.html', {
+            'form': form,
+            'analytics_data': analytics_data,
+        })
 
     @admin.action(description='Подтвердить выбранные бронирования')
     def confirm_booking(self, request, queryset):
@@ -85,9 +109,9 @@ class BookingAdmin(admin.ModelAdmin):
             booking.save()
             AdminActionLog.objects.create(
                 admin_user=request.user,
-                action=f"Бронирование #{booking.id} было администратором {request.user.username}."
+                action=f"Бронирование #{booking.id} было подтверждено администратором {
+                    request.user.username}."
             )
-            # Уведомление пользователя
             send_telegram_notification(booking.user, f"Ваше бронирование #{booking.id} подтверждено.")
 
 
@@ -112,34 +136,3 @@ class CustomUserAdmin(UserAdmin):
             AdminActionLog.objects.create(
                 admin_user=request.user,
                 action=f"Пользователь {user.username} назначен администратором.")
-
-
-# Просмотр аналитики
-@admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin):
-    change_list_template = 'admin/booking_analytics.html'
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('analytics/', self.admin_site.admin_view(self.analytics_view),
-                 name='booking-analytics'),
-        ]
-        return custom_urls + urls
-
-    def analytics_view(self, request):
-        form = BookingAnalyticsForm(request.POST or None)
-        analytics_data = None
-
-        if form.is_valid():
-            analytics_data = form.get_analytics()
-            
-            AdminActionLog.objects.create(
-                admin_user=request.user,
-                action=f"Администратор {request.user.username} запросил аналитику."
-            )
-
-        return TemplateResponse(request, 'admin/booking_analytics.html', {
-            'form': form,
-            'analytics_data': analytics_data,
-        })
