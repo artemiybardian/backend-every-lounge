@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'users.middleware.TokenFromUrlMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'airport_backend.middlewares.DisableJWTForAdminMiddleware',
 ]
 
 ROOT_URLCONF = 'airport_backend.urls'
@@ -115,6 +116,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Для админки
+    'rest_framework_simplejwt.authentication.JWTAuthentication',  # Для API
 ]
 
 
