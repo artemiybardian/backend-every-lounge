@@ -24,7 +24,7 @@ class Lounge(models.Model):
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.airport.name}"
+        return f"{self.name} - {self.airport_id.name}"
 
 
 class LoungeSchedule(models.Model):
