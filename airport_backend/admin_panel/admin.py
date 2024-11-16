@@ -136,8 +136,7 @@ class BookingAdmin(admin.ModelAdmin):
             
             AdminActionLog.objects.create(
                 admin_user=request.user,
-                action=f"Администратор {request.user.username} запросил аналитику за период с {form.cleaned_data['start_date']} по 
-                {form.cleaned_data['end_date']}."
+                action=f"Администратор {request.user.username} запросил аналитику."
             )
 
         return TemplateResponse(request, 'admin/booking_analytics.html', {
