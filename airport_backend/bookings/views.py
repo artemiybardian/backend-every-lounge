@@ -17,19 +17,26 @@ class BookingCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         user = request.user
         lounge_id = request.data.get('lounge_id')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        guest_count = request.data.get('guest_count')
 
         try:
             lounge = Lounge.objects.get(id=lounge_id)
         except Lounge.DoesNotExist:
             return Response({'status': 'error', 'details': 'Lounge not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Расчет общей цены с наценкой
-        total_price = lounge.base_price * Decimal(1 + MARKUP_PERCENTAGE)
+        # Расчет общей цены с наценкой и учет кол-ва гостей
+        total_price = (lounge.base_price * Decimal(1 +
+                       MARKUP_PERCENTAGE)) * guest_count
 
         # Создание бронирования
         booking = Booking.objects.create(
             user=user,
             lounge=lounge,
+            first_name=first_name,
+            last_name=last_name,
+            guest_count=guest_count,
             total_price=total_price,
             status='in_progress'
         )

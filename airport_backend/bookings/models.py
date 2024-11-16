@@ -12,6 +12,9 @@ class Booking(models.Model):
     user = models.ForeignKey(AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     lounge = models.ForeignKey(Lounge, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=64, null=False)
+    last_name = models.CharField(max_length=64, null=False)
+    guest_count = models.IntegerField(default=1)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default='in_progress')
     total_price = models.DecimalField(
