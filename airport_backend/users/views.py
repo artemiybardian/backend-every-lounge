@@ -70,6 +70,5 @@ class TelegramAuthView(APIView):
                 "details": "Location updated successfully",
                 "token": access_token
             }, status=status.HTTP_200_OK)
-        # except Exception as e:
-            # return Response({"status": "error", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        except Exception as e:
+            return Response({"status": "error", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -6,8 +6,6 @@ from locations import views
 router = SimpleRouter()
 router.register(r'airports', views.AirportReadOnlyViewSet)
 router.register(r'lounges', views.LoungeReadOnlyViewSet, basename='lounge')
-# router.register(r'nearest_airports', views.NearestAirportsViewSet,
-#                 basename='nearest_airports')
 
 urlpatterns = [
     path('', include(router.urls)),
