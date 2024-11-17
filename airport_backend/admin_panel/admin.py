@@ -1,9 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.template.response import TemplateResponse
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
-from airport_backend.users.models import CustomUser
+from users.models import CustomUser
 from bookings.models import Booking, BookingLog
 from .models import AdminActionLog
 from locations.models import Airport, Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage
