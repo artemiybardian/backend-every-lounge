@@ -111,33 +111,3 @@ class CustomUserAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
             AdminActionLog.objects.create(
                 admin_user=request.user,
                 action=f"Пользователь {user.username} назначен администратором.")
-
-
-class BookingAnalyticsAdmin(admin.ModelAdmin):
-    change_list_template = 'admin/booking_analytics.html'
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('analytics/', self.admin_site.admin_view(self.analytics_view),
-                 name='booking-analytics'),
-        ]
-        return custom_urls + urls
-
-    def analytics_view(self, request):
-        form = BookingAnalyticsForm(request.POST or None)
-        analytics_data = None
-
-        if form.is_valid():
-            analytics_data = form.get_analytics()
-            AdminActionLog.objects.create(
-                admin_user=request.user,
-                action=f"Администратор {request.user.username} запросил аналитику.")
-
-        return TemplateResponse(request, 'admin/booking_analytics.html', {
-            'form': form,
-            'analytics_data': analytics_data,
-        })
-
-
-admin.site.register(Booking, BookingAnalyticsAdmin)
