@@ -6,7 +6,7 @@ from bookings.models import Booking, BookingLog
 from .models import AdminActionLog
 from locations.models import Airport, Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage
 from .forms import BookingAnalyticsForm
-from airport_backend.utils import send_telegram_notification 
+from airport_backend.utils import send_telegram_notification
 
 
 class AdminActionLoggingMixin:
@@ -15,13 +15,17 @@ class AdminActionLoggingMixin:
         action = "обновлена" if change else "создана"
         AdminActionLog.objects.create(
             admin_user=request.user,
-            action=f"Запись {obj} была {action} администратором {request.user.username}.")
+            action=f"Запись {obj} была {
+                action} администратором {request.user.username}."
+        )
 
     def delete_model(self, request, obj):
         super().delete_model(request, obj)
         AdminActionLog.objects.create(
             admin_user=request.user,
-            action=f"Запись {obj} была удалена администратором {request.user.username}.")
+            action=f"Запись {obj} была удалена администратором {
+                request.user.username}."
+        )
 
 
 @admin.register(Airport)
@@ -73,7 +77,8 @@ class AdminActionLogAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
     # change_list_template = 'admin/booking_analytics.html'
-    list_display = ('id', 'user', 'lounge', 'status', 'first_name', 'last_name', 'guest_count', 'total_price', 'created_at')
+    list_display = ('id', 'user', 'lounge', 'status', 'first_name',
+                    'last_name', 'guest_count', 'total_price', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('user__username', 'lounge__name', 'last_name')
     actions = ['confirm_booking']
@@ -85,10 +90,11 @@ class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
             booking.save()
             AdminActionLog.objects.create(
                 admin_user=request.user,
-                action=f"Бронирование #{booking.id} было подтверждено администратором {request.user.username}."
+                action=f"Бронирование #{booking.id} было подтверждено администратором {
+                    request.user.username}."
             )
-            send_telegram_notification(booking.user.telegram_id, f"Ваше бронирование бизнес-зала {booking.lounge.name} подтверждено.")
-
+            send_telegram_notification(
+                booking.user.telegram_id, f"Ваше бронирование бизнес-зала {booking.lounge.name} подтверждено.")
 
 
 @admin.register(BookingLog)
@@ -110,4 +116,6 @@ class CustomUserAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
         for user in queryset:
             AdminActionLog.objects.create(
                 admin_user=request.user,
-                action=f"Пользователь {user.username} назначен администратором.")
+                action=f"Пользователь {
+                    user.username} назначен администратором."
+            )
