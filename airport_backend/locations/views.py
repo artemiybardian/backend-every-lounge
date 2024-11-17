@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from .models import Airport, Lounge
 from .serializers import AirportSerializer, LoungeSerializer
@@ -38,19 +38,72 @@ class LoungeReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
-    # only develop version
+# class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
+#     # only develop version
+#     # permission_classes = [IsAuthenticated]
+#     serializer_class = AirportSerializer
+
+#     serializer_class = AirportSerializer
+
+#     def list(self, request):
+#         user = request.user
+
+#         # Проверка, что у пользователя установлены координаты
+#         if not user.location or 'latitude' not in user.location or 'longitude' not in user.location:
+#             return Response({"error": "User location not set"}, status=status.HTTP_400_BAD_REQUEST)
+
+#         user_lat = user.location['latitude']
+#         user_lon = user.location['longitude']
+
+#         # Получаем количество ближайших аэропортов по умолчанию из настроек
+#         nearest_count = getattr(settings, 'NEAREST_AIRPORTS_COUNT', 2)
+
+#         # Создаем список для хранения аэропортов с рассчитанным расстоянием
+#         airports_with_distance = []
+
+#         # Вычисляем расстояние до каждого аэропорта и добавляем в список
+#         for airport in Airport.objects.all():
+#             airport_location = airport.location
+#             airport_lat = airport_location['latitude']
+#             airport_lon = airport_location['longitude']
+
+#             if not airport_lat or not airport_lon:
+#                 continue
+
+#             # Рассчитываем расстояние и добавляем аэропорты в список
+#             distance = haversine(user_lat, user_lon, airport_lat, airport_lon)
+
+#             # Извлекаем нужные поля из объекта Airport, чтобы они были сериализуемыми
+#             airports_with_distance.append({
+#                 'id': airport.id,
+#                 'name': airport.name,
+#                 'code': airport.code,
+#                 'city': airport.city,
+#                 'country': airport.country,
+#                 'distance': round(distance)
+#             })
+
+#         # Сортируем аэропорты по расстоянию
+#         airports_with_distance.sort(key=lambda x: x['distance'])
+
+#         # Ограничиваем список ближайшими аэропортами
+#         nearest_airports = airports_with_distance[:nearest_count]
+
+#         # Возвращаем ответ
+#         return Response(nearest_airports, status=status.HTTP_200_OK)
+
+
+class NearestAirportsView(generics.ListAPIView):
+    # Только для аутентифицированных пользователей в рабочем режиме
     # permission_classes = [IsAuthenticated]
     serializer_class = AirportSerializer
 
-    serializer_class = AirportSerializer
-
-    def list(self, request):
-        user = request.user
+    def get_queryset(self):
+        user = self.request.user
 
         # Проверка, что у пользователя установлены координаты
         if not user.location or 'latitude' not in user.location or 'longitude' not in user.location:
-            return Response({"error": "User location not set"}, status=status.HTTP_400_BAD_REQUEST)
+            return []
 
         user_lat = user.location['latitude']
         user_lon = user.location['longitude']
@@ -64,10 +117,10 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
         # Вычисляем расстояние до каждого аэропорта и добавляем в список
         for airport in Airport.objects.all():
             airport_location = airport.location
-            airport_lat = airport_location['latitude']
-            airport_lon = airport_location['longitude']
+            airport_lat = airport_location.get('latitude')
+            airport_lon = airport_location.get('longitude')
 
-            if not airport_lat or not airport_lon:
+            if airport_lat is None or airport_lon is None:
                 continue
 
             # Рассчитываем расстояние и добавляем аэропорты в список
@@ -87,7 +140,12 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
         airports_with_distance.sort(key=lambda x: x['distance'])
 
         # Ограничиваем список ближайшими аэропортами
-        nearest_airports = airports_with_distance[:nearest_count]
+        return airports_with_distance[:nearest_count]
 
-        # Возвращаем ответ
-        return Response(nearest_airports, status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset:
+            return Response({"error": "User location not set or no airports found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(queryset, status=status.HTTP_200_OK)
