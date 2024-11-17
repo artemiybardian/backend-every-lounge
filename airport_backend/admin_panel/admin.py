@@ -73,7 +73,7 @@ class AdminActionLogAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
-    change_list_template = 'admin/booking_analytics.html'
+    # change_list_template = 'admin/booking_analytics.html'
     list_display = ('id', 'user', 'lounge', 'status', 'first_name', 'last_name', 'guest_count', 'total_price', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('user__username', 'lounge__name', 'last_name')
