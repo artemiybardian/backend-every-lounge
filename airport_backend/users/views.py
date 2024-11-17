@@ -1,9 +1,11 @@
 from django.contrib.auth import login
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from users.models import CustomUser
+from .serializers import CustomUserSerializer
 from logging import getLogger
 from rest_framework_simplejwt.tokens import RefreshToken
 import logging
@@ -71,3 +73,10 @@ class TelegramAuthView(APIView):
             }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"status": "error", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserProfileView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data, status=200)
