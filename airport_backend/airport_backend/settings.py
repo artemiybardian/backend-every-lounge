@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-txm_4_2^w+76_2@^lxh&k8(2_ef=dotq_5lbxi(oumv_)7^nrp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['91.236.197.214', 'lounge-booking.com', 'www.lounge-booking.com']
+ALLOWED_HOSTS = ['91.236.197.214', 'lounge-booking.com', 'www.lounge-booking.com', '127.0.0.1']
 
 
 # Application definition
