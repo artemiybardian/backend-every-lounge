@@ -111,7 +111,7 @@ class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
                 admin_user=request.user,
                 action=f"Бронирование #{booking.id} было подтверждено администратором {request.user.username}."
             )
-            send_telegram_notification(booking.user, f"Ваше бронирование #{booking.id} подтверждено.")
+            send_telegram_notification(booking.user.telegram_id, f"Ваше бронирование #{booking.id} подтверждено.")
 
 
 
