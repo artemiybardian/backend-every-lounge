@@ -41,6 +41,7 @@ class LoungeReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
     # only develop version
     # permission_classes = [IsAuthenticated]
+    serializer_class = AirportSerializer
 
     serializer_class = AirportSerializer
 
