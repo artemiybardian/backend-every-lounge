@@ -113,13 +113,8 @@ class CustomUserAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
                 action=f"Пользователь {user.username} назначен администратором.")
 
 
-@admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
+class BookingAnalyticsAdmin(admin.ModelAdmin):
     change_list_template = 'admin/booking_analytics.html'
-    list_display = ('id', 'user', 'lounge', 'status', 'first_name',
-                    'last_name', 'guest_count', 'total_price', 'created_at')
-    list_filter = ('status', 'created_at')
-    search_fields = ('user__username', 'lounge__name', 'last_name')
 
     def get_urls(self):
         urls = super().get_urls()
@@ -143,3 +138,6 @@ class BookingAdmin(admin.ModelAdmin, AdminActionLoggingMixin):
             'form': form,
             'analytics_data': analytics_data,
         })
+
+
+admin.site.register(Booking, BookingAnalyticsAdmin)
