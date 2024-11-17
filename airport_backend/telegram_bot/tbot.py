@@ -56,7 +56,6 @@ def handle_location(message):
                 "latitude": latitude,
                 "longitude": longitude
             },
-            "is_staff": False
         }
 
         # Отправляем данные на Django API

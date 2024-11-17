@@ -57,8 +57,7 @@ class EntryCondition(models.Model):
     lounge = models.ForeignKey(
         Lounge, related_name="entry_conditions", on_delete=models.CASCADE, verbose_name="Бизнес-зал"
     )
-    type = models.IntegerField(
-        verbose_name="Тип доступа (например, 0 - бесплатно, 1 - платно)")
+    type = models.IntegerField(verbose_name="Тип доступа")
     cost = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Стоимость")
     max_stay_duration = models.DurationField(
