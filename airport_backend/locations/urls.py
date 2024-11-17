@@ -10,5 +10,5 @@ router.register(r'lounges', views.LoungeReadOnlyViewSet, basename='lounge')
 urlpatterns = [
     path('', include(router.urls)),
     path('nearest_airports/', views.NearestAirportsView.as_view()),
-    path('airports/search/', views.AirportSearchView.as_view(), name='airport-search'),
+    path('airport/search/', views.AirportSearchView.as_view(), name='airport-search'),
 ]
