@@ -42,6 +42,8 @@ class NearestAirportsViewSet(viewsets.ReadOnlyModelViewSet):
     # only develop version
     # permission_classes = [IsAuthenticated]
 
+    serializer_class = AirportSerializer
+
     def list(self, request):
         user = request.user
 

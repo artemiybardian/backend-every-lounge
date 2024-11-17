@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 
 services:
   db:
@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
     expose:
       - 5432
     networks:
@@ -55,6 +55,7 @@ services:
     networks:
       - mynetwork
 
+
 volumes:
   postgres_data:
     driver: local
@@ -67,7 +68,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./static 
+      device: ./staticfiles 
 
 networks:
   mynetwork:

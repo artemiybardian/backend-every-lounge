@@ -42,8 +42,6 @@ class TelegramAuthView(APIView):
                 user.is_staff = is_staff
             user.save()
 
-            login(request, user)  
-
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
@@ -72,6 +70,6 @@ class TelegramAuthView(APIView):
                 "details": "Location updated successfully",
                 "token": access_token
             }, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"status": "error", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # except Exception as e:
+            # return Response({"status": "error", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
