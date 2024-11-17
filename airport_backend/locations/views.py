@@ -2,8 +2,10 @@ from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from .models import Airport, Lounge
 from .serializers import AirportSerializer, LoungeSerializer
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
+from django.db.models import Q
 from .utils import haversine
 from rest_framework.decorators import action
 
@@ -91,3 +93,28 @@ class NearestAirportsView(generics.ListAPIView):
             return Response({"error": "User location not set or no airports found"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(queryset, status=status.HTTP_200_OK)
+
+
+class AirportSearchView(APIView):
+    """
+    API для поиска аэропортов по названию, городу или коду аэропорта
+    """
+
+    def get(self, request):
+        word = request.query_params.get('word', '').strip()
+        if not word:
+            return Response([], status=status.HTTP_200_OK)
+
+        # Поиск совпадений по полям name, code, city
+        airports = Airport.objects.filter(
+            Q(name__icontains=word) |
+            Q(code__icontains=word) |
+            Q(city__icontains=word) |
+            Q(country__icontains=word)
+        )
+
+        if not airports.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        serializer = AirportSerializer(airports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
