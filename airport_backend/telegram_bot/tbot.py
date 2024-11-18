@@ -58,11 +58,11 @@ def send_welcome(message):
     # Создаем клавиатуру с кнопкой для отправки местоположения
     keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     location_button = KeyboardButton(
-        text="Отправить своё местоположение", request_location=True)
+        text="Отправить своё местоположение😊", request_location=True)
     keyboard.add(location_button)
 
     bot.send_message(
-        message.chat.id, "Пожалуйста, отправьте своё текущее местоположение, нажав на кнопку ниже.", reply_markup=keyboard)
+        message.chat.id, "Отправьте своё текущее местоположение по кнопке ниже:", reply_markup=keyboard)
 
 # Обработка местоположения пользователя
 
@@ -104,7 +104,7 @@ def handle_location(message):
                 # Создаем кнопку для перехода в WebApp с передачей токена
                 keyboard = InlineKeyboardMarkup()
                 button = InlineKeyboardButton(
-                    text="Перейти в WebApp",
+                    text="Перейти в приложение😊",
                     web_app=WebAppInfo(f"{WEBAPP_URL}?token={access_token}")
                 )
                 keyboard.add(button)
@@ -112,7 +112,7 @@ def handle_location(message):
                 # Отправляем сообщение с кнопкой
                 sent_message = bot.send_message(
                     message.chat.id,
-                    "Вы можете перейти в ваш аккаунт в WebApp, нажав на кнопку ниже:",
+                    "Переходите в приложение по кнопке ниже:",
                     reply_markup=keyboard
                 )
 
