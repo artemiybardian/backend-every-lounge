@@ -96,8 +96,6 @@ def handle_location(message):
         logger.info("Отправлены данные на Django: %s", data)
 
         if response.status_code == 200:
-            bot.send_message(message.chat.id, "Ваши данные успешно обновлены.")
-
             # Получаем токен доступа из Django API
             response_data = response.json()
             if 'token' in response_data:
