@@ -1,5 +1,5 @@
 import telebot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import (ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo)
 import requests
 import logging
 
@@ -74,7 +74,7 @@ def handle_location(message):
                 keyboard = InlineKeyboardMarkup()
                 button = InlineKeyboardButton(
                     text="Перейти в WebApp", 
-                    url=f"{WEBAPP_URL}?token={access_token}"
+                    web_app=WebAppInfo(f"{WEBAPP_URL}?token={access_token}")
                 )
                 keyboard.add(button)
 
