@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 API_TOKEN = '7702184372:AAFpYNtn0V1MJRYB7BwgYVkd1pBhdWvSXCU'
 DJANGO_API_URL = 'https://lounge-booking.com/api/users/auth/'
-WEBAPP_URL = 'https://lounge-booking.com/'
+WEBAPP_URL = 'https://lounge-booking.c  om/'
 
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -30,38 +30,38 @@ def send_welcome(message):
         "✈️ **Добро пожаловать в Every Lounge WebApp!**\n\n"
         "Забронируйте доступ в лучшие залы ожидания аэропортов по всему миру. "
         "Просто следуйте инструкциям, и мы подберем для вас ближайший доступный зал.\n\n"
-        "Нам нужна ваша локация для подбора лучших залов."
+        "Нам нужна ваша локация для подбора лучших залов.\n"
         "Нажмите **'Начать бронирование'**, чтобы продолжить!"
     )
 
     # Кнопка "Начать бронирование"
-    keyboard = InlineKeyboardMarkup(row_width=1)
-    start_button = InlineKeyboardButton(
-        text="Начать бронирование", callback_data="start_booking")
-    keyboard.add(start_button)
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    location_button = KeyboardButton(
+        text="Отправить своё местоположение", request_location=True)
+    keyboard.add(location_button)
 
     bot.send_message(message.chat.id, welcome_text,
                      reply_markup=keyboard, parse_mode='Markdown')
 
 
 # Обработка кнопки "Начать бронирование"
-@bot.callback_query_handler(func=lambda callback: True)
-def callback_booking(callback):
-    # logger.info("Пользователь %s начал бронирование.", callback.from_user.username)
+# @bot.callback_query_handler(func=lambda callback: True)
+# def callback_booking(callback):
+#     # logger.info("Пользователь %s начал бронирование.", callback.from_user.username)
 
-    # Запрос местоположения
-    location_request_text = (
-        "📍 Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!"
-    )
+#     # Запрос местоположения
+#     location_request_text = (
+#         "📍 Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!"
+#     )
 
-    # Кнопка "Отправить местоположение"
-    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    location_button = KeyboardButton(
-        text="Отправить местоположение", request_location=True)
-    keyboard.add(location_button)
+#     # Кнопка "Отправить местоположение"
+#     keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+#     location_button = KeyboardButton(
+#         text="Отправить местоположение", request_location=True)
+#     keyboard.add(location_button)
 
-    bot.send_message(callback.message.chat.id, location_request_text,
-                     reply_markup=keyboard)
+#     bot.send_message(callback.message.chat.id, location_request_text,
+#                      reply_markup=keyboard)
 
 
 # Обработка местоположения пользователя
