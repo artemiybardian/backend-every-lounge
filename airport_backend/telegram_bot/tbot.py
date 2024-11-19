@@ -79,9 +79,9 @@ def send_welcome(message):
         "Нажмите **'Отправить локацию'**, чтобы продолжить!"
     )
 
-    # Кнопка "Начать бронирование"
-    keyboard = InlineKeyboardMarkup()
-    start_button = InlineKeyboardButton(
+    # Кнопка "Отправить локацию"
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    start_button = KeyboardButton(
         text="Отправить своё местоположение", request_location=True)
     keyboard.add(start_button)
 
