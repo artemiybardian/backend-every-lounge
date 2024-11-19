@@ -46,7 +46,7 @@ def send_welcome(message):
 
 # Обработка кнопки "Начать бронирование"
 @bot.callback_query_handler(func=lambda callback: True)
-def start_booking(callback):
+def callback_booking(callback):
     # logger.info("Пользователь %s начал бронирование.", callback.from_user.username)
 
     # Запрос местоположения
