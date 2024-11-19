@@ -6,7 +6,7 @@ from telebot.types import (
 import requests
 import logging
 from datetime import datetime, timedelta
-import threading
+# import threading
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -22,47 +22,47 @@ buttons_store = {}
 bot = telebot.TeleBot(API_TOKEN)
 
 
-# Фоновая задача для удаления устаревших кнопок
-def cleanup_old_buttons():
-    while True:
-        now = datetime.now()
-        to_update = []
+# # Фоновая задача для удаления устаревших кнопок
+# def cleanup_old_buttons():
+#     while True:
+#         now = datetime.now()
+#         to_update = []
 
-        for key, value in buttons_store.items():
-            if now - value['timestamp'] > timedelta(days=1):
-                try:
-                    # Обновляем сообщение с текстом "Обновите местоположение"
-                    bot.edit_message_text(
-                        chat_id=value['chat_id'],
-                        message_id=value['message_id'],
-                        text="⏳ Пожалуйста, обновите ваше местоположение!",
-                        reply_markup=create_location_button()
-                    )
-                    to_update.append(key)
-                except Exception as e:
-                    logger.error(f"Ошибка обновления сообщения: {e}")
+#         for key, value in buttons_store.items():
+#             if now - value['timestamp'] > timedelta(days=1):
+#                 try:
+#                     # Обновляем сообщение с текстом "Обновите местоположение"
+#                     bot.edit_message_text(
+#                         chat_id=value['chat_id'],
+#                         message_id=value['message_id'],
+#                         text="⏳ Пожалуйста, обновите ваше местоположение!",
+#                         reply_markup=create_location_button()
+#                     )
+#                     to_update.append(key)
+#                 except Exception as e:
+#                     logger.error(f"Ошибка обновления сообщения: {e}")
 
-        # Удаляем записи из хранилища
-        for key in to_update:
-            del buttons_store[key]
+#         # Удаляем записи из хранилища
+#         for key in to_update:
+#             del buttons_store[key]
 
-        # Проверяем каждые 10 минут
-        threading.Event().wait(600)
-
-
-def create_location_button():
-    """
-    Создает клавиатуру с кнопкой "Отправить местоположение".
-    """
-    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    location_button = KeyboardButton(
-        text="Отправить местоположение", request_location=True)
-    keyboard.add(location_button)
-    return keyboard
+#         # Проверяем каждые 10 минут
+#         threading.Event().wait(600)
 
 
-# Запускаем фоновую задачу
-threading.Thread(target=cleanup_old_buttons, daemon=True).start()
+# def create_location_button():
+#     """
+#     Создает клавиатуру с кнопкой "Отправить местоположение".
+#     """
+#     keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+#     location_button = KeyboardButton(
+#         text="Отправить местоположение", request_location=True)
+#     keyboard.add(location_button)
+#     return keyboard
+
+
+# # Запускаем фоновую задачу
+# threading.Thread(target=cleanup_old_buttons, daemon=True).start()
 
 
 # Обработка команды /start
@@ -89,11 +89,11 @@ def send_welcome(message):
 
 
 # Обработка нажатия кнопки "Начать бронирование"
-@bot.callback_query_handler(func=lambda call: call.data == "start_booking")
+@bot.callback_query_handler(func=lambda call: True)
 def start_booking(call):
     logger.info("Кнопка 'Начать бронирование' нажата пользователем %s",
                 call.from_user.username)
-
+    
     # Удаляем предыдущее сообщение с кнопкой
     bot.delete_message(call.message.chat.id, call.message.message_id)
 
