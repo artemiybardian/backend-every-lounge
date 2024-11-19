@@ -89,13 +89,13 @@ def send_welcome(message):
 
 
 # Обработка нажатия кнопки "Начать бронирование"
-@bot.callback_query_handler(func=lambda call: True)
-def start_booking(call):
+@bot.callback_query_handler(func=lambda callback: True)
+def start_booking(callback):
     logger.info("Кнопка 'Начать бронирование' нажата пользователем %s",
-                call.from_user.username)
+                callback.from_user.username)
     
     # Удаляем предыдущее сообщение с кнопкой
-    bot.delete_message(call.message.chat.id, call.message.message_id)
+    bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
     # Сообщение с запросом местоположения
     location_text = (
@@ -109,7 +109,7 @@ def start_booking(call):
         text="Отправить местоположение", request_location=True)
     keyboard.add(location_button)
 
-    bot.send_message(call.message.chat.id, location_text,
+    bot.send_message(callback.message.chat.id, location_text,
                      reply_markup=keyboard, parse_mode='Markdown')
 
 
