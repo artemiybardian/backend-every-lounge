@@ -6,7 +6,6 @@ from telebot.types import (
 import requests
 import logging
 from datetime import datetime, timedelta
-# import threading
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -21,51 +20,9 @@ buttons_store = {}
 
 bot = telebot.TeleBot(API_TOKEN)
 
-
-# # Фоновая задача для удаления устаревших кнопок
-# def cleanup_old_buttons():
-#     while True:
-#         now = datetime.now()
-#         to_update = []
-
-#         for key, value in buttons_store.items():
-#             if now - value['timestamp'] > timedelta(days=1):
-#                 try:
-#                     # Обновляем сообщение с текстом "Обновите местоположение"
-#                     bot.edit_message_text(
-#                         chat_id=value['chat_id'],
-#                         message_id=value['message_id'],
-#                         text="⏳ Пожалуйста, обновите ваше местоположение!",
-#                         reply_markup=create_location_button()
-#                     )
-#                     to_update.append(key)
-#                 except Exception as e:
-#                     logger.error(f"Ошибка обновления сообщения: {e}")
-
-#         # Удаляем записи из хранилища
-#         for key in to_update:
-#             del buttons_store[key]
-
-#         # Проверяем каждые 10 минут
-#         threading.Event().wait(600)
-
-
-# def create_location_button():
-#     """
-#     Создает клавиатуру с кнопкой "Отправить местоположение".
-#     """
-#     keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-#     location_button = KeyboardButton(
-#         text="Отправить местоположение", request_location=True)
-#     keyboard.add(location_button)
-#     return keyboard
-
-
-# # Запускаем фоновую задачу
-# threading.Thread(target=cleanup_old_buttons, daemon=True).start()
-
-
 # Обработка команды /start
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     logger.info("Команда /start получена от %s", message.from_user.username)
@@ -75,23 +32,37 @@ def send_welcome(message):
         "✈️ **Добро пожаловать в Every Lounge WebApp!**\n\n"
         "Забронируйте доступ в лучшие залы ожидания аэропортов по всему миру. "
         "Просто следуйте инструкциям, и мы подберем для вас ближайший доступный зал.\n\n"
-        "Нам нужна ваша локация для подбора лучших залов."
-        "Нажмите **'Отправить локацию'**, чтобы продолжить!"
+        "Нажмите **'Начать бронирование'**, чтобы продолжить!"
     )
 
     # Кнопка "Отправить локацию"
-    # Можете указать row_width для того, чтобы кнопки выстраивались в одну колонку
     keyboard = InlineKeyboardMarkup(row_width=1)
     start_button = InlineKeyboardButton(
-        text="Отправить своё местоположение", request_location=True)
+        text="Начать бронирование", callback_data="start_booking")
     keyboard.add(start_button)
 
     bot.send_message(message.chat.id, welcome_text,
                      reply_markup=keyboard, parse_mode='Markdown')
 
-    bot.send_message(
-        message.chat.id, welcome_text, reply_markup=keyboard, parse_mode='Markdown')
 
+# Обработка кнопки "Начать бронирование"
+@bot.callback_query_handler(func=lambda call: call.data == "start_booking")
+def start_booking(call):
+    logger.info("Пользователь %s начал бронирование.", call.from_user.username)
+
+    # Запрос местоположения
+    location_request_text = (
+        "📍 Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!"
+    )
+
+    # Кнопка "Отправить местоположение"
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    location_button = KeyboardButton(
+        text="Отправить местоположение", request_location=True)
+    keyboard.add(location_button)
+
+    bot.send_message(call.message.chat.id, location_request_text,
+                     reply_markup=keyboard)
 
 
 # Обработка местоположения пользователя
