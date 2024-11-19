@@ -80,10 +80,14 @@ def send_welcome(message):
     )
 
     # Кнопка "Отправить локацию"
-    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    start_button = KeyboardButton(
+    # Можете указать row_width для того, чтобы кнопки выстраивались в одну колонку
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    start_button = InlineKeyboardButton(
         text="Отправить своё местоположение", request_location=True)
     keyboard.add(start_button)
+
+    bot.send_message(message.chat.id, welcome_text,
+                     reply_markup=keyboard, parse_mode='Markdown')
 
     bot.send_message(
         message.chat.id, welcome_text, reply_markup=keyboard, parse_mode='Markdown')
