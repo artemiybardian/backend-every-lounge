@@ -15,19 +15,38 @@ class BookingCreateAPIView(generics.CreateAPIView):
     serializer_class = BookingSerializer
 
     def create(self, request, *args, **kwargs):
-        # Получение и валидация данных выполняется сериализатором
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        booking = serializer.save(user=request.user)
+        user = request.user
+        lounge_id = request.data.get('lounge_id')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        guest_count = request.data.get('guest_count')
+
+        try:
+            lounge = Lounge.objects.get(id=lounge_id)
+        except Lounge.DoesNotExist:
+            return Response({'status': 'error', 'details': 'Lounge not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Расчет общей цены с наценкой и учет кол-ва гостей
+        total_price = (lounge.base_price * Decimal(1 +
+                       MARKUP_PERCENTAGE)) * guest_count
+
+        # Создание бронирования
+        booking = Booking.objects.create(
+            user=user,
+            lounge=lounge,
+            first_name=first_name,
+            last_name=last_name,
+            guest_count=guest_count,
+            total_price=total_price,
+            status='in_progress'
+        )
 
         # Логирование бронирования
         BookingLog.objects.create(booking_id=booking)
+        
+        # Отправка уведомления в Telegram (если нужно)
+        send_telegram_notification(user.telegram_id, f"Ваше бронирование {booking.lounge.name} для аэропорта {booking.lounge.airport_id.name} создано.")
 
-        # Отправка уведомления в Telegram
-        send_telegram_notification(
-            booking.user.telegram_id,
-            f"Ваше бронирование {booking.lounge.name} для аэропорта {
-                booking.lounge.airport_id.name} создано."
-        )
-
+        # Сериализация данных и отправка ответа
+        serializer = self.get_serializer(booking)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

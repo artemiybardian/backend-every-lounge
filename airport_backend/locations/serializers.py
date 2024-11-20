@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Lounge, LoungeSchedule, EntryCondition, Feature, GalleryImage, Airport
+from decimal import Decimal
+from airport_backend.settings import MARKUP_PERCENTAGE
 
 
 class AirportSerializer(serializers.ModelSerializer):
@@ -38,6 +40,14 @@ class LoungeSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
     gallery = GalleryImageSerializer(many=True, read_only=True)
 
+    # Переопределяем base_price
+    base_price = serializers.SerializerMethodField()
+
     class Meta:
         model = Lounge
-        fields = ['id', 'name', 'airport','description', 'terminal', 'base_price','schedule', 'entry_conditions', 'features', 'gallery']
+        fields = ['id', 'name', 'airport', 'description', 'terminal',
+                  'base_price', 'schedule', 'entry_conditions', 'features', 'gallery']
+
+    def get_base_price(self, obj):
+        """Рассчитываем цену с наценкой."""
+        return obj.base_price * Decimal(1 + MARKUP_PERCENTAGE)
