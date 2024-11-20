@@ -34,12 +34,16 @@ def send_welcome(message):
         "Нажмите **'Отправить локацию'**, чтобы продолжить!"
     )
 
-    keyboard = InlineKeyboardMarkup()
+    # keyboard = InlineKeyboardMarkup()
     # start_button = InlineKeyboardButton(
     #     text="Отправить локацию", callback_data="start_booking")
-    start_button = InlineKeyboardButton(
-        text="Отправить локацию", request_location=True)
-    keyboard.add(start_button)
+    # keyboard.add(start_button)
+    
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    location_button = KeyboardButton(
+        text="Отправить местоположение", request_location=True)
+    keyboard.add(location_button)
+    
     bot.send_message(
         message.chat.id, welcome_text, reply_markup=keyboard, parse_mode='Markdown')    
 
