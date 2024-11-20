@@ -21,14 +21,14 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$',
+    re_path(r'^api/swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger',
+    path('api/swagger/', schema_view.with_ui('swagger',
          cache_timeout=0), name='schema-swagger-ui'),
-    path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
-    path('locations/', include('locations.urls')),
-    path('bookings/', include('bookings.urls')),
-    path('payments/', include('payments.urls')),
-    path('notifications/', include('notifications.urls')),
+    path('api/admin/', admin.site.urls),
+    path('api/users/', include('users.urls')),
+    path('api/locations/', include('locations.urls')),
+    path('api/bookings/', include('bookings.urls')),
+    path('api/payments/', include('payments.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ]
