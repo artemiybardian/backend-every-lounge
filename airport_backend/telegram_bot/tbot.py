@@ -30,36 +30,39 @@ def send_welcome(message):
         "✈️ **Добро пожаловать в Every Lounge WebApp!**\n\n"
         "Забронируйте доступ в лучшие залы ожидания аэропортов по всему миру. "
         "Просто следуйте инструкциям, и мы подберем для вас ближайший доступный зал.\n\n"
-        "Нажмите **'Начать бронирование'**, чтобы продолжить!"
+        "📍 **Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!**\n\n"
+        "Нажмите **'Отправить локацию'**, чтобы продолжить!"
     )
 
     keyboard = InlineKeyboardMarkup()
+    # start_button = InlineKeyboardButton(
+    #     text="Отправить локацию", callback_data="start_booking")
     start_button = InlineKeyboardButton(
-        text="Начать бронирование", callback_data="start_booking")
+        text="Отправить локацию", request_location=True)
     keyboard.add(start_button)
     bot.send_message(
         message.chat.id, welcome_text, reply_markup=keyboard, parse_mode='Markdown')    
 
 
 # Обработка кнопки "Начать бронирование"
-@bot.callback_query_handler(func=lambda callback: True)
-def callback_booking(callback):
-    logger.info("Пользователь %s начал бронирование.", callback.from_user.username)
+# @bot.callback_query_handler(func=lambda callback: True)
+# def callback_booking(callback):
+#     logger.info("Пользователь %s начал бронирование.", callback.from_user.username)
 
-    bot.delete_message(callback.message.chat.id, callback.message.message_id)
+#     bot.delete_message(callback.message.chat.id, callback.message.message_id)
     
-    location_text = (
-        "📍 **Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!**\n\n"
-        "Нажмите кнопку **'Отправить местоположение'** ниже."
-    )
+#     location_text = (
+#         "📍 **Пожалуйста, отправьте ваше местоположение, чтобы мы нашли ближайшие залы ожидания!**\n\n"
+#         "Нажмите кнопку **'Отправить местоположение'** ниже."
+#     )
 
-    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    location_button = KeyboardButton(
-        text="Отправить местоположение", request_location=True)
-    keyboard.add(location_button)
+#     keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+#     location_button = KeyboardButton(
+#         text="Отправить местоположение", request_location=True)
+#     keyboard.add(location_button)
 
-    bot.send_message(callback.message.chat.id, location_text,
-                     reply_markup=keyboard)
+#     bot.send_message(callback.message.chat.id, location_text,
+#                      reply_markup=keyboard)
 
 
 # Обработка местоположения пользователя
