@@ -50,4 +50,4 @@ class LoungeSerializer(serializers.ModelSerializer):
 
     def get_base_price(self, obj):
         """Рассчитываем цену с наценкой."""
-        return obj.base_price * Decimal(1 + MARKUP_PERCENTAGE)
+        return round(obj.base_price * Decimal(1 + MARKUP_PERCENTAGE))

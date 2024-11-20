@@ -27,8 +27,8 @@ class BookingCreateAPIView(generics.CreateAPIView):
             return Response({'status': 'error', 'details': 'Lounge not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Расчет общей цены с наценкой и учет кол-ва гостей
-        total_price = (lounge.base_price * Decimal(1 +
-                       MARKUP_PERCENTAGE)) * guest_count
+        total_price = round((lounge.base_price * Decimal(1 +
+                       MARKUP_PERCENTAGE)) * guest_count)
 
         # Создание бронирования
         booking = Booking.objects.create(
