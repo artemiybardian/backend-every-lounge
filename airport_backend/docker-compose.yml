@@ -27,13 +27,11 @@ services:
       - db
     networks:
       - mynetwork
-    volumes:
-      - ./staticfiles:/staticfiles
 
   telegram_bot:
     build:
-      context: ./telegram_bot 
-    command: python run.py  
+      context: ./telegram_bot
+    command: python run.py
     env_file:
       - .env
     depends_on:
@@ -41,20 +39,6 @@ services:
       - db
     networks:
       - mynetwork
-  
-  admin_bot:
-    build:
-      context: ./telegram_bot 
-    command: python admin_bot.py  
-    env_file:
-      - .env
-    depends_on:
-      - app
-      - db
-      - telegram_bot
-    networks:
-      - mynetwork
-
 
 volumes:
   postgres_data:
@@ -62,13 +46,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./postgres_data 
+      device: ./postgres_data
   static_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./staticfiles 
+      device: ./staticfiles
 
 networks:
   mynetwork:
