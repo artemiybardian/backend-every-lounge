@@ -33,7 +33,7 @@ services:
   telegram_bot:
     build:
       context: ./telegram_bot 
-    command: python tbot.py  
+    command: python run.py  
     env_file:
       - .env
     depends_on:
