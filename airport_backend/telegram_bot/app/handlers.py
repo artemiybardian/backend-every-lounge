@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from app.keyboards import booking, location
