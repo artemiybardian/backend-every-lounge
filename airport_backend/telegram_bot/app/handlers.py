@@ -68,7 +68,8 @@ async def handle_location(message: Message):
             # Создаем кнопку для перехода в WebApp с передачей токена
             lounge_book = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="Забронировать зал😊", 
-                                      web_app=WebAppInfo(url=f"{WEBAPP_URL}?token={access_token}"))]
+                                      web_app=WebAppInfo(
+                                          url=f"{WEBAPP_URL}?token={access_token}"))]
             ])
 
             await message.answer("Бронируйте залы ожидания аэропортов по кнопке ниже:", reply_markup=lounge_book)
