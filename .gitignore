@@ -164,5 +164,4 @@ cython_debug/
 postgres_data/
 
 staticfiles/
-templates/
 output.json
