@@ -162,3 +162,7 @@ cython_debug/
 .idea/
 
 postgres_data/
+
+staticfiles/
+templates/
+output.json
